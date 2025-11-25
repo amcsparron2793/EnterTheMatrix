@@ -37,7 +37,7 @@ class InitializeMatrix(FrameDrawer):
         self.frame += 1
 
 
-class Matrix(InitializeMatrix):
+class EnterTheMatrix(InitializeMatrix):
     """
     Provides functionality for managing and displaying a dynamic matrix.
 
@@ -47,11 +47,11 @@ class Matrix(InitializeMatrix):
     interrupts for a clean shutdown.
     """
     @classmethod
-    def quick_dial_in(cls, **kwargs):
+    def quick_jack_in(cls, **kwargs):
         klass = cls(**kwargs)
-        return klass.enter_the_matrix()
+        return klass.jack_in()
 
-    def enter_the_matrix(self):
+    def jack_in(self):
         try:
             while True:
                 self._initialize_frame()
@@ -65,5 +65,5 @@ class Matrix(InitializeMatrix):
 
 
 if __name__ == "__main__":
-    m = Matrix()
-    m.enter_the_matrix()
+    m = EnterTheMatrix()
+    m.jack_in()
