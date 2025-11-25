@@ -20,10 +20,12 @@ class InitializeMatrix(FrameDrawer):
     """
     INTRO_TEXT = "Starting Matrix rain effect...\nPress Ctrl+C to exit"
 
-    @classmethod
-    def clean_exit(cls):
-        print(cls.SHOW_CURSOR)  # Show cursor
-        print(cls.RESET)
+    def clean_exit(self):
+        print(self.__class__.SHOW_CURSOR)  # Show cursor
+        print(self.__class__.RESET)
+        system('cls' if os_name == 'nt' else 'clear')
+        self._initialize_frame(error=True)
+        self.draw_frame()
         print("\n\nExiting Matrix...")
         time.sleep(2)
         system('cls' if os_name == 'nt' else 'clear')

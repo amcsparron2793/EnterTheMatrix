@@ -46,12 +46,12 @@ class _TerminalFrame:
         self.colors = []
 
     @abstractmethod
-    def update_and_draw_columns(self):
+    def update_and_draw_columns(self, **kwargs):
         pass
 
-    def _initialize_frame(self):
+    def _initialize_frame(self, **kwargs):
         self._create_display_buffer()
-        self.update_and_draw_columns()
+        self.update_and_draw_columns(**kwargs)
 
     def _create_display_buffer(self):
         # Create the blank display buffer and a list that will hold the color codes for each character

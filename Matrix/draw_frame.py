@@ -54,10 +54,13 @@ class FrameDrawer(_TerminalFrame):
         # in the appropriate slot of the display list
         self.display[vert_pos][col_index] = random.choice(self.__class__.CHARS)
 
-    def _set_character_color(self, vert_pos: int, col_index: int, trail_length: int):
+    def _set_character_color(self, vert_pos: int, col_index: int, trail_length: int, **kwargs):
         # Color gradient: bright at head, dim at tail
         # set the color of the character in the
         # color's list to the same slot as the display list
+        if kwargs.get('error'):
+            self.colors[vert_pos][col_index] = self.__class__.RED
+            return
         if trail_length == 0:
             self.colors[vert_pos][col_index] = self.__class__.BRIGHT_GREEN
         elif trail_length < 3:
@@ -65,16 +68,16 @@ class FrameDrawer(_TerminalFrame):
         else:
             self.colors[vert_pos][col_index] = self.__class__.DIM_GREEN
 
-    def _draw_and_color_character(self, col_index: int, trail_length: int):
+    def _draw_and_color_character(self, col_index: int, trail_length: int, **kwargs):
         vert_pos = self.drops[col_index] - trail_length
         if self._character_within_terminal_bounds(vert_pos):
             self._set_display_character(vert_pos, col_index)
-            self._set_character_color(vert_pos, col_index, trail_length)
+            self._set_character_color(vert_pos, col_index, trail_length, **kwargs)
 
-    def _draw_column_trail(self, col_index: int):
+    def _draw_column_trail(self, col_index: int, **kwargs):
         # Draw the trail
         for trail_length in range(self.lengths[col_index]):
-            self._draw_and_color_character(col_index, trail_length)
+            self._draw_and_color_character(col_index, trail_length, **kwargs)
 
     def _reset_column(self, col_index):
         self.drops[col_index] = 0
@@ -89,7 +92,7 @@ class FrameDrawer(_TerminalFrame):
         if drop_position > max_length_for_terminal:
             self._reset_column(col_index)
 
-    def update_and_draw_columns(self):
+    def update_and_draw_columns(self, **kwargs):
         # Update and draw each column
         for col_index in range(self.terminal_columns):
             column_speed = self.speeds[col_index]
@@ -102,7 +105,7 @@ class FrameDrawer(_TerminalFrame):
                 self.drops[col_index] += 1
 
             self._check_for_drop_off(col_index)
-            self._draw_column_trail(col_index)
+            self._draw_column_trail(col_index, **kwargs)
 
     def initialize_columns(self):
         # Initialize columns
