@@ -18,8 +18,30 @@ class InitializeMatrix(FrameDrawer):
             Static introduction text displayed when starting the Matrix rain
             effect.
     """
-    # TODO: turn "box" formatting into a function
-    INTRO_TEXT = """---------------\n| Starting Matrix rain effect... | \n| Press Ctrl+C to exit |\n---------------\n"""
+    #INTRO_TEXT = """---------------\n| Starting Matrix rain effect... | \n| Press Ctrl+C to exit |\n---------------\n"""
+    INTRO_TEXT = "Starting Matrix rain effect...\nPress Ctrl+C to exit"
+
+    def format_text_box(self, text, color=None, dash_char='-'):
+        """Format text with decorative lines and centering"""
+        if color is None:
+            color = self.__class__.GREEN
+
+        lines = text.split('\n')
+
+        # Create top border
+        border = dash_char * len(max(lines))#self.terminal_columns
+
+        # Build formatted output
+        output = []
+        output.append(f"{color}{self.center_string(border)}{self.__class__.RESET}")
+
+        for line in lines:
+            centered_line = self.center_string(line)
+            output.append(f"{color}{centered_line}{self.__class__.RESET}")
+
+        output.append(f"{color}{self.center_string(border)}{self.__class__.RESET}")
+
+        return '\n'.join(output)
 
     def center_string(self, string:str) -> str:
         return f"{string:^{self.terminal_columns}}"
@@ -41,10 +63,12 @@ class InitializeMatrix(FrameDrawer):
         system('cls' if os_name == 'nt' else 'clear')
 
     def _print_intro(self):
-        intro_lines = self.__class__.INTRO_TEXT.split('\n')
-        for ln in intro_lines:
-            intro_line = f"{self.__class__.GREEN}{self.center_string(ln)}{self.__class__.RESET}"
-            print(intro_line)
+        print(self.format_text_box(self.__class__.INTRO_TEXT))
+        exit()
+        # intro_lines = self.__class__.INTRO_TEXT.split('\n')
+        # for ln in intro_lines:
+        #     intro_line = f"{self.__class__.GREEN}{self.center_string(ln)}{self.__class__.RESET}"
+        #     print(intro_line)
         time.sleep(2)
 
     def _sleep_and_advance_frame(self):
