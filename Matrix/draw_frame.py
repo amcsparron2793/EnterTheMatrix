@@ -145,34 +145,34 @@ class TextFormatter:
 
     def _gen_text_box_border(self, line_length: int = None, dash_char: str = None, **kwargs):
         dash_char = self._get_border_dash(dash_char, **kwargs)
-        if line_length is None:
-            line_length = self.terminal_columns
+        border_length = line_length if line_length is not None else self.terminal_columns
 
-        return (self._gen_random_special_char_border(line_length, dash_char)
-                if isinstance(dash_char, list) else dash_char * line_length)
+        if isinstance(dash_char, list):
+            return self._gen_random_special_char_border(border_length, dash_char)
 
-    def format_as_text_box(self, text, color=None, dash_char='-', **kwargs):
+        return dash_char * line_length
+
+    def _format_colored_line(self, text: str, color) -> str:
+        """Format a single line with color codes and centering"""
+        centered_text = self.center_string(text)
+        return f"{color}{centered_text}{_TerminalFrame.RESET}"
+
+    def format_as_text_box(self, text, color=None, dash_char=None, **kwargs):
         """Format text with decorative lines and centering"""
-        # if color is None:
-        #     color = FrameDrawer.GREEN
 
         lines = text.split('\n')
-        border_length = kwargs.get('border_length', len(max(lines)))
+        _max_line_length = len(max(lines))
+        border_length = kwargs.get('border_length', _max_line_length)
 
         # Create top border
         border = self._gen_text_box_border(line_length=border_length, dash_char=dash_char, **kwargs)
-        full_formatted_border = f"{color}{self.center_string(border)}{_TerminalFrame.RESET}"
+        formatted_border = self._format_colored_line(border, color)
 
         # Build formatted output
         # noinspection PyListCreation
-        output = []
-        output.append(full_formatted_border)
-
-        for line in lines:
-            centered_line = self.center_string(line)
-            output.append(f"{color}{centered_line}{_TerminalFrame.RESET}")
-
-        output.append(full_formatted_border)
+        output = [formatted_border]
+        output.extend(self._format_colored_line(line, color) for line in lines)
+        output.append(formatted_border)
 
         return '\n'.join(output)
 
