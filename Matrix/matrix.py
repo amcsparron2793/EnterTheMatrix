@@ -1,8 +1,7 @@
 import time
-import random
 from os import system, name as os_name
 
-from Matrix.draw_frame import FrameDrawer
+from Matrix.draw_frame import FrameDrawer, TextFormatter
 
 
 class InitializeMatrix(FrameDrawer):
@@ -19,56 +18,19 @@ class InitializeMatrix(FrameDrawer):
             Static introduction text displayed when starting the Matrix rain
             effect.
     """
-    #INTRO_TEXT = """---------------\n| Starting Matrix rain effect... | \n| Press Ctrl+C to exit |\n---------------\n"""
     INTRO_TEXT = "Starting Matrix rain effect...\nPress Ctrl+C to exit"
     EXIT_TEXT = "Exiting Matrix..."
 
-    def _text_box_border(self, line_length: int = None, dash_char='-', **kwargs):
-        if kwargs.get('force_basic_dash', False):
-            dash_char = '-'
-        if line_length is None:
-            line_length = self.terminal_columns
-
-        return (' '.join([random.choice(self.__class__.CHARS)
-                          for _ in range(line_length)])
-                if isinstance(dash_char, list) else dash_char * line_length)
-
-    def format_text_box(self, text, color=None, dash_char='-', **kwargs):
-        """Format text with decorative lines and centering"""
-        if color is None:
-            color = self.__class__.GREEN
-
-        lines = text.split('\n')
-        border_length = kwargs.get('border_length', len(max(lines)))
-
-        # Create top border
-        border = self._text_box_border(line_length=border_length,
-                                       dash_char=dash_char, **kwargs)
-        full_formatted_border = f"{color}{self.center_string(border)}{self.__class__.RESET}"
-
-        # Build formatted output
-        # noinspection PyListCreation
-        output = []
-        output.append(full_formatted_border)
-
-        for line in lines:
-            centered_line = self.center_string(line)
-            output.append(f"{color}{centered_line}{self.__class__.RESET}")
-
-        output.append(full_formatted_border)
-
-        return '\n'.join(output)
-
-    def center_string(self, string: str) -> str:
-        return f"{string:^{self.terminal_columns}}"
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.text_formatter = TextFormatter(self.terminal_columns)
 
     def _print_error_screen(self):
         system('cls' if os_name == 'nt' else 'clear')
         self._initialize_frame(error=True)
         self.draw_frame()
-        full_err_text = self.format_text_box(self.__class__.EXIT_TEXT,
-                                             color=self.__class__.RED,
-                                             dash_char=self.__class__.CHARS)
+        full_err_text = self.text_formatter.format_as_text_box(self.__class__.EXIT_TEXT, color=self.__class__.RED,
+                                                               dash_char=self.__class__.CHARS)
         print(f"\n{full_err_text}")
 
     def clean_exit(self):
@@ -81,8 +43,8 @@ class InitializeMatrix(FrameDrawer):
         system('cls' if os_name == 'nt' else 'clear')
 
     def _print_intro(self):
-        formatted_intro = self.format_text_box(self.__class__.INTRO_TEXT,
-                                               dash_char=self.__class__.CHARS)
+        formatted_intro = self.text_formatter.format_as_text_box(self.__class__.INTRO_TEXT, color=self.__class__.GREEN,
+                                                                 dash_char=self.__class__.CHARS)
         print(formatted_intro)
         time.sleep(2)
 
