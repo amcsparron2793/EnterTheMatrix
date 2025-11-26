@@ -157,6 +157,15 @@ class TextFormatter:
         centered_text = self.center_string(text)
         return f"{color}{centered_text}{_TerminalFrame.RESET}"
 
+    def _build_formatted_output(self, lines: list, formatted_border: str, color=None) -> str:
+        # Build formatted output
+        # noinspection PyListCreation
+        output = [formatted_border]
+        output.extend(self._format_colored_line(line, color) for line in lines)
+        output.append(formatted_border)
+
+        return '\n'.join(output)
+
     def format_as_text_box(self, text, color=None, dash_char=None, **kwargs):
         """Format text with decorative lines and centering"""
 
@@ -168,13 +177,7 @@ class TextFormatter:
         border = self._gen_text_box_border(line_length=border_length, dash_char=dash_char, **kwargs)
         formatted_border = self._format_colored_line(border, color)
 
-        # Build formatted output
-        # noinspection PyListCreation
-        output = [formatted_border]
-        output.extend(self._format_colored_line(line, color) for line in lines)
-        output.append(formatted_border)
-
-        return '\n'.join(output)
+        return self._build_formatted_output(lines, formatted_border, color)
 
     def center_string(self, string: str) -> str:
         return f"{string:^{self.terminal_columns}}"
