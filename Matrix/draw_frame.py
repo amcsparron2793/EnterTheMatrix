@@ -86,7 +86,7 @@ class FrameDrawer(_TerminalFrame):
         self.lengths[col_index] = random.randint(5, 25)
 
     def _check_for_drop_off(self, col_index):
-        # self.__class__.RESET column if it's gone off screen
+        # reset a column if it's gone off-screen
         drop_position = self.drops[col_index]
         max_length_for_terminal = self.terminal_lines + self.lengths[col_index]
         if drop_position > max_length_for_terminal:
@@ -118,3 +118,66 @@ class FrameDrawer(_TerminalFrame):
         lengths = [random.randint(5, 25) for _ in range(self.terminal_columns)]
 
         return drops, speeds, lengths
+
+
+class TextFormatter:
+    DEFAULT_DASH_CHAR = '-'
+
+    def __init__(self, terminal_columns: int, **kwargs):
+        self.terminal_columns = terminal_columns
+        self.special_dash_chars = kwargs.get('special_dash_chars', None)
+
+    @staticmethod
+    def _gen_random_special_char_border(line_length: int, dash_char: list):
+        return ' '.join([random.choice(dash_char)
+                         for _ in range(line_length)])
+
+    def _get_border_dash(self, dash_char: str = None, **kwargs):
+        if kwargs.get('force_basic_dash', False):
+            dash_char = self.__class__.DEFAULT_DASH_CHAR
+        elif dash_char is None:
+            dash_char = self.special_dash_chars
+            if dash_char is None:
+                dash_char = self.__class__.DEFAULT_DASH_CHAR
+        if dash_char is None:
+            raise AttributeError("dash_char cannot be none")
+        return dash_char
+
+    def _gen_text_box_border(self, line_length: int = None, dash_char: str = None, **kwargs):
+        dash_char = self._get_border_dash(dash_char, **kwargs)
+        border_length = line_length if line_length is not None else self.terminal_columns
+
+        if isinstance(dash_char, list):
+            return self._gen_random_special_char_border(border_length, dash_char)
+
+        return dash_char * line_length
+
+    def _format_colored_line(self, text: str, color) -> str:
+        """Format a single line with color codes and centering"""
+        centered_text = self.center_string(text)
+        return f"{color}{centered_text}{_TerminalFrame.RESET}"
+
+    def _build_formatted_output(self, lines: list, formatted_border: str, color=None) -> str:
+        # Build formatted output
+        # noinspection PyListCreation
+        output = [formatted_border]
+        output.extend(self._format_colored_line(line, color) for line in lines)
+        output.append(formatted_border)
+
+        return '\n'.join(output)
+
+    def format_as_text_box(self, text, color=None, dash_char=None, **kwargs):
+        """Format text with decorative lines and centering"""
+
+        lines = text.split('\n')
+        _max_line_length = len(max(lines))
+        border_length = kwargs.get('border_length', _max_line_length)
+
+        # Create top border
+        border = self._gen_text_box_border(line_length=border_length, dash_char=dash_char, **kwargs)
+        formatted_border = self._format_colored_line(border, color)
+
+        return self._build_formatted_output(lines, formatted_border, color)
+
+    def center_string(self, string: str) -> str:
+        return f"{string:^{self.terminal_columns}}"

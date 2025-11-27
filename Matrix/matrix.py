@@ -1,7 +1,7 @@
 import time
 from os import system, name as os_name
 
-from Matrix.draw_frame import FrameDrawer
+from Matrix.draw_frame import FrameDrawer, TextFormatter
 
 
 class InitializeMatrix(FrameDrawer):
@@ -18,18 +18,20 @@ class InitializeMatrix(FrameDrawer):
             Static introduction text displayed when starting the Matrix rain
             effect.
     """
-    # TODO: turn "box" formatting into a function
-    INTRO_TEXT = """---------------\n| Starting Matrix rain effect... | \n| Press Ctrl+C to exit |\n---------------\n"""
+    INTRO_TEXT = "Starting Matrix rain effect...\nPress Ctrl+C to exit"
+    EXIT_TEXT = "Exiting Matrix..."
 
-    def center_string(self, string:str) -> str:
-        return f"{string:^{self.terminal_columns}}"
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.text_formatter = TextFormatter(self.terminal_columns)
 
     def _print_error_screen(self):
         system('cls' if os_name == 'nt' else 'clear')
         self._initialize_frame(error=True)
         self.draw_frame()
-        error_text = f"{self.__class__.RED}Exiting Matrix...{self.__class__.RESET}"
-        print(f"\n{self.center_string(error_text)}")
+        full_err_text = self.text_formatter.format_as_text_box(self.__class__.EXIT_TEXT, color=self.__class__.RED,
+                                                               dash_char=self.__class__.CHARS)
+        print(f"\n{full_err_text}")
 
     def clean_exit(self):
         print(self.__class__.SHOW_CURSOR)  # Show cursor
@@ -41,10 +43,9 @@ class InitializeMatrix(FrameDrawer):
         system('cls' if os_name == 'nt' else 'clear')
 
     def _print_intro(self):
-        intro_lines = self.__class__.INTRO_TEXT.split('\n')
-        for ln in intro_lines:
-            intro_line = f"{self.__class__.GREEN}{self.center_string(ln)}{self.__class__.RESET}"
-            print(intro_line)
+        formatted_intro = self.text_formatter.format_as_text_box(self.__class__.INTRO_TEXT, color=self.__class__.GREEN,
+                                                                 dash_char=self.__class__.CHARS)
+        print(formatted_intro)
         time.sleep(2)
 
     def _sleep_and_advance_frame(self):
@@ -61,6 +62,7 @@ class EnterTheMatrix(InitializeMatrix):
     a matrix display and iterating through its frames while handling keyboard
     interrupts for a clean shutdown.
     """
+
     @classmethod
     def quick_jack_in(cls, **kwargs):
         klass = cls(**kwargs)
