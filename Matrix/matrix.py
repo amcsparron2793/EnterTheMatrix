@@ -25,11 +25,16 @@ class InitializeMatrix(FrameDrawer):
         super().__init__(**kwargs)
         self.text_formatter = TextFormatter(self.terminal_columns)
 
-    def _print_error_screen(self):
+    @staticmethod
+    def clear_screen():
         system('cls' if os_name == 'nt' else 'clear')
+
+    def _print_error_screen(self):
+        self.clear_screen()
         self._initialize_frame(error=True)
         self.draw_frame()
-        full_err_text = self.text_formatter.format_as_text_box(self.__class__.EXIT_TEXT, color=self.__class__.RED,
+        full_err_text = self.text_formatter.format_as_text_box(self.__class__.EXIT_TEXT,
+                                                               color=self.__class__.RED,
                                                                dash_char=self.__class__.CHARS)
         print(f"\n{full_err_text}")
 
@@ -40,7 +45,7 @@ class InitializeMatrix(FrameDrawer):
         self._print_error_screen()
 
         time.sleep(2)
-        system('cls' if os_name == 'nt' else 'clear')
+        self.clear_screen()
 
     def _print_intro(self):
         formatted_intro = self.text_formatter.format_as_text_box(self.__class__.INTRO_TEXT, color=self.__class__.GREEN,

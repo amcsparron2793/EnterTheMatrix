@@ -1,4 +1,5 @@
 import random
+from typing import Optional
 
 from Matrix.terminal import _TerminalFrame
 
@@ -143,7 +144,7 @@ class TextFormatter:
             raise AttributeError("dash_char cannot be none")
         return dash_char
 
-    def _gen_text_box_border(self, line_length: int = None, dash_char: str = None, **kwargs):
+    def _gen_text_box_border(self, line_length: Optional[int] = None, dash_char: str = None, **kwargs):
         dash_char = self._get_border_dash(dash_char, **kwargs)
         border_length = line_length if line_length is not None else self.terminal_columns
 
