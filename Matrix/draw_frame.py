@@ -1,8 +1,26 @@
+from json import load
 import random
 from typing import Optional
+from pathlib import Path
 
 from Matrix.terminal import _TerminalFrame
 
+class GetChars:
+    DEFAULT_CHARS_PATH = "Matrix/chars.json"
+
+    @classmethod
+    def read_chars(cls, **kwargs):
+        chars_path = kwargs.get('chars_path', cls.DEFAULT_CHARS_PATH)
+        try:
+            with open(chars_path, "r") as f:
+                chars = load(f)
+                return chars
+        except FileNotFoundError:
+            print(f"Error: File '{chars_path}' not found.")
+            return None
+        except Exception as e:
+            print(f"Error reading file '{chars_path}': {e}")
+            return None
 
 class FrameDrawer(_TerminalFrame):
     """
