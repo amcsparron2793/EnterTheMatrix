@@ -1,25 +1,36 @@
-from json import load
+from json import load, dump
 import random
 from typing import Optional, Union
 from pathlib import Path
 
 from Matrix.terminal import _TerminalFrame
 
-# CHARS = [
-#         'ﾊ', 'ﾐ', 'ﾋ', 'ｰ', 'ｳ', 'ｼ', 'ﾅ', 'ﾓ', 'ﾆ', 'ｻ', 'ﾜ', 'ﾂ', 'ｵ', 'ﾘ', 'ｱ', 'ﾎ',
-#         'ﾃ', 'ﾏ', 'ｹ', 'ﾒ', 'ｴ', 'ｶ', 'ｷ', 'ﾑ', 'ﾕ', 'ﾗ', 'ｾ', 'ﾈ', 'ｽ', 'ﾀ', 'ﾇ', 'ﾍ',
-#         '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-#         'Z', ':', '.', '"', '=', '*', '+', '-', '<', '>', '¦', '|', 'ﾘ'
-#     ]
+BACKUP_CHARS = [
+        'ﾊ', 'ﾐ', 'ﾋ', 'ｰ', 'ｳ', 'ｼ', 'ﾅ', 'ﾓ', 'ﾆ', 'ｻ', 'ﾜ', 'ﾂ', 'ｵ', 'ﾘ', 'ｱ', 'ﾎ',
+        'ﾃ', 'ﾏ', 'ｹ', 'ﾒ', 'ｴ', 'ｶ', 'ｷ', 'ﾑ', 'ﾕ', 'ﾗ', 'ｾ', 'ﾈ', 'ｽ', 'ﾀ', 'ﾇ', 'ﾍ',
+        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+        'Z', ':', '.', '"', '=', '*', '+', '-', '<', '>', '¦', '|', 'ﾘ'
+    ]
 
 class GetChars:
-    DEFAULT_CHARS_PATH = Path("./chars.json")
+    DEFAULT_CHARS_PATH = Path('../Misc_Program_Files/chars.json')
+
+    @classmethod
+    def write_chars(cls, **kwargs):
+        chars_path = Path(kwargs.get('chars_path', cls.DEFAULT_CHARS_PATH))
+        chars_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(chars_path, "w") as f:
+            chars_dict = {'CHARS': BACKUP_CHARS}
+            dump(chars_dict, f, indent=4)
+            return chars_dict['CHARS']
 
     @classmethod
     def read_chars(cls, **kwargs) -> Union[list, dict]:
         chars_path = kwargs.get('chars_path', cls.DEFAULT_CHARS_PATH)
         encoding = kwargs.get('encoding', 'utf-8')
         chars_key = kwargs.get('chars_key', 'CHARS')
+        write_file_if_missing = kwargs.get('write_file_if_missing', True)
+
         try:
             with open(chars_path, "r", encoding=encoding) as f:
                 chars = load(f)
@@ -30,7 +41,13 @@ class GetChars:
             return chars
             # exit(1)
         except FileNotFoundError:
-            raise FileNotFoundError(f"Error: File '{chars_path}' not found.")
+            print(write_file_if_missing)
+            if not write_file_if_missing:
+                raise FileNotFoundError(f"Error: File '{chars_path}' not found.")
+            else:
+                print("laskaskldjsalkdj")
+                return cls.write_chars(chars_path=chars_path)
+            return BACKUP_CHARS
             # exit(1)
         except Exception as e:
             raise IOError(f"Error reading file '{chars_path}': {e}")

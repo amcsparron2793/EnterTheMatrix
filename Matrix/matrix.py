@@ -88,5 +88,5 @@ class EnterTheMatrix(InitializeMatrix):
 
 
 if __name__ == "__main__":
-    m = EnterTheMatrix()#chars_path='../Misc_Program_Files/chars.json')
+    m = EnterTheMatrix()
     m.jack_in()

@@ -5,4 +5,8 @@ def main():
     matrix.jack_in()
 
 if __name__ == "__main__":
-    main()
+    from Matrix import ROOT_DIR
+
+    print(ROOT_DIR)
+
+    #main()
