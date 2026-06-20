@@ -4,10 +4,10 @@ from typing import Optional, Union
 from pathlib import Path
 
 try:
-    # from . import ROOT_DIR
+    from . import ROOT_DIR
     from .terminal import _TerminalFrame
 except (ImportError, ModuleNotFoundError):
-    # from Matrix import ROOT_DIR
+    from Matrix import ROOT_DIR
     from Matrix.terminal import _TerminalFrame
 
 BACKUP_CHARS = [
@@ -18,7 +18,7 @@ BACKUP_CHARS = [
     ]
 
 class GetChars:
-    DEFAULT_CHARS_PATH = Path('../Misc_Program_Files/chars.json')
+    DEFAULT_CHARS_PATH = Path(ROOT_DIR /'Misc_Program_Files' / 'chars.json')
 
     @classmethod
     def write_chars(cls, **kwargs):

@@ -1,10 +1,12 @@
+from os import chdir
+
 try:
-    from . import EnterTheMatrix
+    from . import EnterTheMatrix, ROOT_DIR
 except (ImportError, ModuleNotFoundError):
-    from Matrix import EnterTheMatrix
+    from Matrix import EnterTheMatrix, ROOT_DIR
 
 def main():
-    # chdir(ROOT_DIR)
+    chdir(ROOT_DIR)
     matrix = EnterTheMatrix()
     matrix.jack_in()
 

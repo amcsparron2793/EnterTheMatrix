@@ -1,7 +1,7 @@
 from pathlib import Path
 
 # FIXME: implement me?
-ROOT_DIR = Path(__file__).parent
+ROOT_DIR = Path(__file__).parent.parent
 
 try:
     from .terminal import _TerminalFrame
