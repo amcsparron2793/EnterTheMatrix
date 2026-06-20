@@ -1,12 +1,13 @@
-from Matrix import EnterTheMatrix
+try:
+    from . import EnterTheMatrix
+except (ImportError, ModuleNotFoundError):
+    from Matrix import EnterTheMatrix
 
 def main():
+    # chdir(ROOT_DIR)
     matrix = EnterTheMatrix()
     matrix.jack_in()
 
 if __name__ == "__main__":
-    from Matrix import ROOT_DIR
-
-    print(ROOT_DIR)
-
-    #main()
+    #print(ROOT_DIR)
+    main()

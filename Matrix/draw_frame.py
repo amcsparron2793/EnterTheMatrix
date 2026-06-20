@@ -3,7 +3,12 @@ import random
 from typing import Optional, Union
 from pathlib import Path
 
-from Matrix.terminal import _TerminalFrame
+try:
+    # from . import ROOT_DIR
+    from .terminal import _TerminalFrame
+except (ImportError, ModuleNotFoundError):
+    # from Matrix import ROOT_DIR
+    from Matrix.terminal import _TerminalFrame
 
 BACKUP_CHARS = [
         'ﾊ', 'ﾐ', 'ﾋ', 'ｰ', 'ｳ', 'ｼ', 'ﾅ', 'ﾓ', 'ﾆ', 'ｻ', 'ﾜ', 'ﾂ', 'ｵ', 'ﾘ', 'ｱ', 'ﾎ',
@@ -22,6 +27,7 @@ class GetChars:
         with open(chars_path, "w") as f:
             chars_dict = {'CHARS': BACKUP_CHARS}
             dump(chars_dict, f, indent=4)
+            print(f"Wrote backup chars to {chars_path}")
             return chars_dict['CHARS']
 
     @classmethod
@@ -34,6 +40,7 @@ class GetChars:
         try:
             with open(chars_path, "r", encoding=encoding) as f:
                 chars = load(f)
+                print(f"loaded chars dict from {chars_path}")
                 return chars[chars_key]
         except KeyError:
             print(f"Error: Key '{chars_key}' not found in the JSON file.")
@@ -41,11 +48,9 @@ class GetChars:
             return chars
             # exit(1)
         except FileNotFoundError:
-            print(write_file_if_missing)
             if not write_file_if_missing:
                 raise FileNotFoundError(f"Error: File '{chars_path}' not found.")
             else:
-                print("laskaskldjsalkdj")
                 return cls.write_chars(chars_path=chars_path)
             return BACKUP_CHARS
             # exit(1)

@@ -1,7 +1,10 @@
 import time
 from os import system, name as os_name
 
-from Matrix.draw_frame import FrameDrawer, TextFormatter
+try:
+    from .draw_frame import FrameDrawer, TextFormatter
+except (ImportError, ModuleNotFoundError):
+    from Matrix.draw_frame import FrameDrawer, TextFormatter
 
 
 class InitializeMatrix(FrameDrawer):
@@ -71,7 +74,7 @@ class EnterTheMatrix(InitializeMatrix):
     @classmethod
     def quick_jack_in(cls, **kwargs):
         klass = cls(**kwargs)
-        return klass.jack_in()
+        klass.jack_in()
 
     def jack_in(self):
         self._print_intro()
