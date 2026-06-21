@@ -2,6 +2,8 @@ import sys
 from abc import abstractmethod
 from shutil import get_terminal_size
 from os import system, name as os_name
+from typing import Tuple
+
 
 # noinspection PyAbstractClass
 class _TerminalFrame:
@@ -58,17 +60,20 @@ class _TerminalFrame:
     def clear_screen():
         system('cls' if os_name == 'nt' else 'clear')
 
+    def _character_within_terminal_bounds(self, vert_pos: int) -> bool:
+        return 0 <= vert_pos < self.terminal_lines
+
     def _initialize_frame(self, **kwargs):
         self._create_display_buffer()
         self.update_and_draw_columns(**kwargs)
 
-    def _create_display_buffer(self):
+    def _create_display_buffer(self) -> Tuple[list, list]:
         # Create the blank display buffer and a list that will hold the color codes for each character
         self.display = [[' ' for _ in range(self.terminal_columns)] for _ in range(self.terminal_lines)]
         self.colors = [[self.__class__.RESET for _ in range(self.terminal_columns)] for _ in range(self.terminal_lines)]
         return self.display, self.colors
 
-    def _get_terminal_size(self, **kwargs):
+    def _get_terminal_size(self, **kwargs) -> Tuple[int, int]:
         # Get terminal size
         try:
             self.terminal_columns = get_terminal_size().columns
@@ -83,7 +88,7 @@ class _TerminalFrame:
         if row_idx < self.terminal_lines - 1:
             sys.stdout.write('\n')
 
-    def _build_line(self, row_idx):
+    def _build_line(self, row_idx) -> str:
         line = ''
         # add each column character to the line
         for col_idx in range(self.terminal_columns):

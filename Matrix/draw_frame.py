@@ -1,5 +1,5 @@
 import random
-from typing import Optional, Union
+from typing import Optional, Union, Tuple
 
 try:
     from . import ROOT_DIR
@@ -52,9 +52,6 @@ class FrameDrawer(_TerminalFrame):
     def get_chars_list(cls, **kwargs) -> Union[list, dict]:
         cls.CHARS = GetChars.read_chars(**kwargs)
         return cls.CHARS
-
-    def _character_within_terminal_bounds(self, vert_pos: int) -> bool:
-        return 0 <= vert_pos < self.terminal_lines
 
     def _set_display_character(self, vert_pos: int, col_index: int):
         # set display character to a random character from CHARS
@@ -114,7 +111,7 @@ class FrameDrawer(_TerminalFrame):
             self._check_for_drop_off(col_index)
             self._draw_column_trail(col_index, **kwargs)
 
-    def initialize_columns(self):
+    def initialize_columns(self) -> Tuple[list, list, list]:
         # Initialize columns
 
         # list of 0's for each column
@@ -135,11 +132,11 @@ class TextFormatter:
         self.special_dash_chars = kwargs.get('special_dash_chars', None)
 
     @staticmethod
-    def _gen_random_special_char_border(line_length: int, dash_char: list):
+    def _gen_random_special_char_border(line_length: int, dash_char: list) -> str:
         return ' '.join([random.choice(dash_char)
                          for _ in range(line_length)])
 
-    def _get_border_dash(self, dash_char: str = None, **kwargs):
+    def _get_border_dash(self, dash_char: str = None, **kwargs) -> str:
         if kwargs.get('force_basic_dash', False):
             dash_char = self.__class__.DEFAULT_DASH_CHAR
         elif dash_char is None:
@@ -150,7 +147,8 @@ class TextFormatter:
             raise AttributeError("dash_char cannot be none")
         return dash_char
 
-    def _gen_text_box_border(self, line_length: Optional[int] = None, dash_char: str = None, **kwargs):
+    def _gen_text_box_border(self, line_length: Optional[int] = None,
+                             dash_char: str = None, **kwargs) -> str:
         dash_char = self._get_border_dash(dash_char, **kwargs)
         border_length = line_length if line_length is not None else self.terminal_columns
 
@@ -173,7 +171,8 @@ class TextFormatter:
 
         return '\n'.join(output)
 
-    def format_as_text_box(self, text, color=None, dash_char=None, **kwargs):
+    def format_as_text_box(self, text,
+                           color=None, dash_char=None, **kwargs) -> str:
         """Format text with decorative lines and centering"""
 
         lines = text.split('\n')
