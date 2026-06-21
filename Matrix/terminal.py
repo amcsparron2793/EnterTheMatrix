@@ -1,7 +1,7 @@
 import sys
 from abc import abstractmethod
 from shutil import get_terminal_size
-
+from os import system, name as os_name
 
 # noinspection PyAbstractClass
 class _TerminalFrame:
@@ -48,6 +48,15 @@ class _TerminalFrame:
     @abstractmethod
     def update_and_draw_columns(self, **kwargs):
         pass
+
+    @classmethod
+    def _show_cursor_and_reset(cls):
+        print(cls.SHOW_CURSOR)  # Show cursor
+        print(cls.RESET)
+
+    @staticmethod
+    def clear_screen():
+        system('cls' if os_name == 'nt' else 'clear')
 
     def _initialize_frame(self, **kwargs):
         self._create_display_buffer()

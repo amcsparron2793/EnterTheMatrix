@@ -1,5 +1,4 @@
 import time
-from os import system, name as os_name
 
 try:
     from .draw_frame import FrameDrawer, TextFormatter
@@ -28,10 +27,6 @@ class InitializeMatrix(FrameDrawer):
         super().__init__(**kwargs)
         self.text_formatter = TextFormatter(self.terminal_columns)
 
-    @staticmethod
-    def clear_screen():
-        system('cls' if os_name == 'nt' else 'clear')
-
     def _print_error_screen(self):
         self.clear_screen()
         self._initialize_frame(error=True)
@@ -42,9 +37,7 @@ class InitializeMatrix(FrameDrawer):
         print(f"\n{full_err_text}")
 
     def clean_exit(self):
-        print(self.__class__.SHOW_CURSOR)  # Show cursor
-        print(self.__class__.RESET)
-
+        self._show_cursor_and_reset()
         self._print_error_screen()
 
         time.sleep(2)
@@ -76,16 +69,16 @@ class EnterTheMatrix(InitializeMatrix):
         klass = cls(**kwargs)
         klass.jack_in()
 
+    def _frame_loop(self):
+        self._initialize_frame()
+        self.draw_frame()
+        self._sleep_and_advance_frame()
+
     def jack_in(self):
         self._print_intro()
         try:
             while True:
-                self._initialize_frame()
-                # self._create_display_buffer()
-                # self._update_and_draw_columns()
-                self.draw_frame()
-                self._sleep_and_advance_frame()
-
+                self._frame_loop()
         except KeyboardInterrupt:
             self.clean_exit()
 
