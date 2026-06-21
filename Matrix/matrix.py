@@ -1,9 +1,9 @@
 import time
 
 try:
-    from .draw_frame import FrameDrawer, TextFormatter
+    from . import FrameDrawer, TextFormatter
 except (ImportError, ModuleNotFoundError):
-    from Matrix.draw_frame import FrameDrawer, TextFormatter
+    from Matrix import FrameDrawer, TextFormatter
 
 
 class InitializeMatrix(FrameDrawer):
